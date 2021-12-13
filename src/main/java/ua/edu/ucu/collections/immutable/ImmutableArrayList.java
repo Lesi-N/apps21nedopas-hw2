@@ -4,69 +4,100 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public final class ImmutableArrayList implements ImmutableList {
+    private final Object[] arraylist;
+
     public ImmutableArrayList(Object[] elements) {
+        this.arraylist = elements.clone();
     }
 
     public ImmutableArrayList() {
+        this.arraylist = new Object[]{};
     }
 
     @Override
     public ImmutableList add(Object e) {
-        return null;
+        return addAll(arraylist.length - 1, new Object[]{e});
     }
 
     @Override
     public ImmutableList add(int index, Object e) {
-        return null;
+        return addAll(index, new Object[]{e});
     }
 
     @Override
     public ImmutableList addAll(Object[] c) {
-        return null;
+        return addAll(arraylist.length, c);
     }
 
     @Override
     public ImmutableList addAll(int index, Object[] c) {
-        return null;
+        Object[] newArray = new Object[arraylist.length + c.length];
+
+        if (index >= 0) System.arraycopy(arraylist, 0, newArray, 0, index);
+        System.arraycopy(c, 0, newArray, index, c.length);
+        if (arraylist.length - index >= 0)
+            System.arraycopy(arraylist, index, newArray, index + c.length, arraylist.length - index);
+
+        return new ImmutableArrayList(newArray);
     }
 
     @Override
     public Object get(int index) {
-        return null;
+        return arraylist[index];
     }
 
     @Override
     public ImmutableList remove(int index) {
-        return null;
+        Object[] newArray = new Object[arraylist.length - 1];
+        for (int i = 0; i < arraylist.length; i++) {
+            if (i < index) {
+                newArray[i] = arraylist[i];
+            } else if (i > index){
+                newArray[i-1] = arraylist[i];
+            }
+        }
+        return new ImmutableArrayList(newArray);
     }
 
     @Override
     public ImmutableList set(int index, Object e) {
-        return null;
+        Object[] newArray = new Object[arraylist.length];
+        System.arraycopy(arraylist, 0, newArray, 0, arraylist.length);
+        newArray[index] = e;
+        return new ImmutableArrayList(newArray);
     }
 
     @Override
     public int indexOf(Object e) {
-        return 0;
+        int idx = -1;
+        for (int i = 0; i < arraylist.length; i++) {
+            if (arraylist[i] == e){
+                idx = i;
+                break;
+            }
+        }
+        return idx;
     }
 
     @Override
     public int size() {
-        return 0;
+        return arraylist.length;
     }
 
     @Override
     public ImmutableList clear() {
-        return null;
+        return new ImmutableArrayList();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return arraylist.length == 0;
     }
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        Object[] newArray = new Object[arraylist.length];
+        System.arraycopy(arraylist, 0, newArray, 0, arraylist.length);
+        return newArray;
     }
 }
